@@ -10,23 +10,23 @@ jobs:
     steps:
       - checkout
       - run:
-          command:
-            cpm install -g --no-test Dist::Zilla Dist::Zilla::App::Command::cover ExtUtils::MakeMaker
-          name: Install Dzil
-      - run:
-          name: Install dzil author dependencies
+          name: pre_install
           command: |
-            cpm install -g \
-            -w 2 \
-            --mirror=http://cpan.cpantesters.org/ $(dzil authordeps --missing)
+            cpm install --no-test
+            --mirror=http://cpan.cpantesters.org/ Test::Requires::Git Devel::Cover::Report::Codecov
+
       - run:
           name: Install dist deps
           command: |
-            dzil listdeps --author --missing --cpanm-versions | xargs cpanm -n
+            cpanm -n --installdeps .
       - run:
           name: Run Tests
           command: |
-            dzil smoke --release --author && dzil cover -test && dzil xtest
+            perl Makefile.PL && make build && make test
+      - run:
+          name: after_success
+          command: |
+            cover -test -report codecov
 
 workflows:
   build-workflow:
