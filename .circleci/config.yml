@@ -12,7 +12,7 @@ jobs:
       - run:
           name: pre_install
           command: |
-            cpm install --no-test
+            cpm install --no-test \
             --mirror=http://cpan.cpantesters.org/ Test::Requires::Git Devel::Cover::Report::Codecov
 
       - run:
